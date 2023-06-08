@@ -1,15 +1,13 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <CurrencyConverterView header="Currency Converter" />
 </template>
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import HelloWorld from "./components/HelloWorld.vue";
-
+import CurrencyConverterView from "@/components/currency-converter/CurrencyConverterView.vue";
 @Options({
   components: {
-    HelloWorld,
+    CurrencyConverterView,
   },
 })
 export default class App extends Vue {}
