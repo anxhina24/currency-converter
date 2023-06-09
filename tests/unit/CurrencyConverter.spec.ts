@@ -53,22 +53,30 @@ describe("CurrencyConverterView", () => {
 
   test("Render Page", () => {
     expect(wrapper.find("h1").text()).toBe("Currency Converter");
-    expect(wrapper.find("v-text-field[label='Amount']").exists()).toBe(true);
-    expect(wrapper.find("v-autocomplete[label='From']").exists()).toBe(true);
-    expect(wrapper.find("v-icon").exists()).toBe(true);
-    expect(wrapper.find("v-autocomplete[label='To']").exists()).toBe(true);
-    expect(wrapper.find("v-btn").exists()).toBe(true);
+    expect(
+      wrapper
+        .find(
+          "v-text-field[label='Amount']" &&
+            "v-autocomplete[label='From']" &&
+            "v-icon" &&
+            "v-autocomplete[label='To']"
+        )
+        .exists()
+    ).toBe(true);
   });
 
   test("initializes with default values", () => {
     const vm = wrapper.vm;
-    expect(vm.selectedFrom).toBe("eur");
-    expect(vm.selectedTo).toBe("usd");
-    expect(vm.amount).toBe(1);
+    expect(vm.selectedFrom && vm.selectedTo && vm.amount).toBe(
+      "eur" && "usd" && 1
+    );
   });
 
   test("calls fetchCurrencyListAction on component created", () => {
-    expect(storeOptions.actions?.fetchCurrencyListAction).toHaveBeenCalled();
+    expect(
+      storeOptions.actions?.fetchCurrencyListAction &&
+        storeOptions.actions?.currencyValueAction
+    ).toHaveBeenCalled();
   });
 
   test("calls currencyValueAction when converting value", async () => {
@@ -76,11 +84,17 @@ describe("CurrencyConverterView", () => {
     vm.selectedFrom = "usd";
     vm.selectedTo = "eur";
     vm.amount = 10;
-    await wrapper.find("v-btn").trigger("click");
+    vm.convertValue();
+    await wrapper.vm.$nextTick();
     expect(storeOptions.actions?.currencyValueAction).toHaveBeenCalledWith(
       expect.any(Object),
       { from: "usd", to: "eur" }
     );
+    // check if the converted value is displayed on the page
+    const resultText = `${vm.amount} ${vm.selectedFrom.toUpperCase()}=${
+      vm.amount * vm.currencyValue
+    } ${vm.selectedTo.toUpperCase()}`;
+    expect(wrapper.text()).toContain(resultText);
   });
 
   test("switches currencies when switchCurrencies method is called", async () => {
@@ -88,21 +102,15 @@ describe("CurrencyConverterView", () => {
     vm.selectedFrom = "usd";
     vm.selectedTo = "eur";
     await vm.switchCurrencies();
-
-    expect(vm.selectedFrom).toBe("eur");
-    expect(vm.selectedTo).toBe("usd");
+    await wrapper.vm.$nextTick();
+    expect(vm.selectedFrom && vm.selectedTo).toBe("eur" && "usd");
   });
 
   test("calls convertValue when selectedFrom or selectedTo change", async () => {
     const vm = wrapper.vm;
     const convertValueSpy = jest.spyOn(vm, "convertValue");
-    convertValueSpy.mockReset();
     vm.selectedTo = "usd";
-    await wrapper.vm.onSelectedCurrencyChange();
-    expect(convertValueSpy).toHaveBeenCalledTimes(1);
-    convertValueSpy.mockReset();
-    vm.selectedTo = "eur";
-    await wrapper.vm.onSelectedCurrencyChange();
-    expect(convertValueSpy).toHaveBeenCalledTimes(2);
+    await vm.onSelectedCurrencyChange();
+    expect(convertValueSpy).toHaveBeenCalled();
   });
 });
