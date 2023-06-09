@@ -3,12 +3,12 @@
     <v-row align="center" justify="center">
       <v-col cols="12" md="8" lg="12">
         <v-card class="currency-converter-card" elevation="10">
-          <v-card-title class="mb-6">
+          <v-card-title class="mb-12 mt-6">
             <h1 class="header">{{ header }}</h1>
           </v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="12" sm="4">
+              <v-col cols="12" sm="3">
                 <v-text-field
                   label="Amount"
                   dense
@@ -16,7 +16,7 @@
                   v-model="amount"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" sm="3">
+              <v-col cols="12" sm="4">
                 <v-autocomplete
                   label="From"
                   v-model="selectedFrom"
